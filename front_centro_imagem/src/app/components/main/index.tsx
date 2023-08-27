@@ -2,13 +2,14 @@ import React from 'react'
 
 import { Box } from '@mui/material'
 import TableMain from './table'
+import FilterMain from './filter'
 
 function Main() {
   return (
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
         height: '90vh',
         backgroundColor: '#dbd5c4',
@@ -17,6 +18,7 @@ function Main() {
       }}
       component="main"
     >
+      <FilterMain />
       <TableMain />
     </Box>
   )
