@@ -1,10 +1,16 @@
-import React from 'react'
+'use client'
+import React, { use, useContext } from 'react'
 
 import { Box } from '@mui/material'
 import TableMain from './table'
 import FilterMain from './filter'
+import ModalSolicitacao from '../modal/addSolicitacao'
+import { SolicitacaoContext } from '../../../context'
 
 function Main() {
+  const { openModalSolicitacao, handleOpen, handleClose } = useContext(SolicitacaoContext);
+  console.log(openModalSolicitacao)
+
   return (
     <Box
       sx={{
@@ -20,6 +26,10 @@ function Main() {
     >
       <FilterMain />
       <TableMain />
+      <ModalSolicitacao
+        open={openModalSolicitacao}
+        setClose={handleClose}
+      />
     </Box>
   )
 }

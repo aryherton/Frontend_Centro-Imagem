@@ -1,6 +1,6 @@
-import React from 'react'
+'use client'
+import React, { useContext } from 'react'
 import { v4 as uuidv4 } from 'uuid';
-import Image from 'next/image';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,10 +9,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import IconAdd from '../../../../../public/icons8-add-30.png'
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
+import ButtonAdd from '../fragment/buttonAdd';
+import { SolicitacaoContext } from '../../../../context';
 
 function TableMain() {
+  const { handleOpen } = useContext(SolicitacaoContext);
   const rows = [
     createData('Aprovado', 'João', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
     createData('Pendente', 'Maria', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
@@ -48,14 +50,9 @@ function TableMain() {
           padding: '10px',
         }}
       >
-        <Button sx={{ cursor: 'pointer', borderRadius: '50%' }}>
-          <Image
-            src={IconAdd}
-            alt="Icon Add"
-            width={25}
-            height={25}
-          />
-        </Button>
+        <ButtonAdd
+          setOpen={handleOpen}
+        />
       </Box>
       <TableContainer sx={{ borderRadius: '1%' }} component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

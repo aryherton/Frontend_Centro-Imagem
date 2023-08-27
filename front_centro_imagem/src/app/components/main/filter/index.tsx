@@ -27,13 +27,14 @@ function FilterMain() {
         width: '100%',
         display: 'flex',
         justifyContent: 'space-around',
+        flexWrap: 'wrap',
         marginBottom: '60px',
       }}
       component="nav"
     >
       <Autocomplete
         {...defaultProps}
-        sx={{ width: '15%' }}
+        sx={{ width: '15%', minWidth: '150px' }}
         id="disable-clearable"
         disableClearable
         renderInput={(params) => (
@@ -42,7 +43,7 @@ function FilterMain() {
       />
       <Autocomplete
         {...defaultProps}
-        sx={{ width: '15%' }}
+        sx={{ width: '15%', minWidth: '150px' }}
         id="disable-clearable"
         disableClearable
         renderInput={(params) => (
@@ -52,7 +53,7 @@ function FilterMain() {
       <CustomDateRangeInputs />
       <Autocomplete
         {...defaultProps}
-        sx={{ width: '15%' }}
+        sx={{ width: '15%', minWidth: '150px' }}
         id="disable-clearable"
         disableClearable
         renderInput={(params) => (
@@ -61,7 +62,7 @@ function FilterMain() {
       />
       <Autocomplete
         {...defaultProps}
-        sx={{ width: '15%' }}
+        sx={{ width: '15%', minWidth: '150px' }}
         id="disable-clearable"
         disableClearable
         renderInput={(params) => (

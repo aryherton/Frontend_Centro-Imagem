@@ -1,6 +1,7 @@
 import './globals.css'
 import React, { ReactNode } from 'react'
 import type { Metadata } from 'next'
+import { SolicitacaoProvider } from '@/context'
 
 export const metadata: Metadata = {
   title: 'Solicitação de exames',
@@ -14,7 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt">
-      <body>{children}</body>
+      <body>
+        <SolicitacaoProvider>
+          {children}
+        </SolicitacaoProvider>
+      </body>
     </html>
   )
 }
