@@ -1,6 +1,7 @@
 'use client'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,26 +10,60 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import ButtonAdd from '../fragment/buttonAdd';
-import { SolicitacaoContext } from '../../../../context';
+import { ICadastroSolicitacao, SolicitacaoContext } from '../../../../context';
+import IconEdit from '../../../../../public/edit24.png';
+import IconAprovar from '../../../../../public/aprovado.png';
+import IconDelete from '../../../../../public/icons8-delete-48.png';
+import ModalConfirmApprove from '../../modal/confirmApprove';
+import { getAllSolicitation, updateSolicitation } from '@/services/fetch/apiSolicitation';
+
+interface IRowTable {
+  status?: string;
+  name?: string;
+  dateSolicitacao?: string;
+  exame?: string;
+  guia?: number | string;
+  buttonAprovar?: string;
+  iconEdit?: string;
+  iconDelete?: string;
+}
 
 function TableMain() {
-  const { handleOpen } = useContext(SolicitacaoContext);
-  const rows = [
-    createData('Aprovado', 'João', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
-    createData('Pendente', 'Maria', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
-    createData('Aprovado', 'José', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
-    createData('Aprovado', 'Lucas', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
-    createData('Pendente', 'Ana', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
-  ]
+  const [rows, setRows] = React.useState<IRowTable[]>([]);
+  const [openModalApprove, setOpenModalApprove] = React.useState(false);
+  const [selectGuia, setSelectGuia] = React.useState<string | number>('');
+  const { handleOpen, solicitacaoData, setSolicitacaoData } = useContext(SolicitacaoContext);
+  // const rows = [
+  //   createData('Aprovado', 'João', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
+  //   createData('Pendente', 'Maria', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
+  //   createData('Aprovado', 'José', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
+  //   createData('Aprovado', 'Lucas', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
+  //   createData('Pendente', 'Ana', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
+  // ]
+
+  const handleApprove = async () => {
+    const updateSolicitacao = solicitacaoData
+      .find((item: ICadastroSolicitacao) => item.guia === selectGuia);
+
+    if (updateSolicitacao) {
+      updateSolicitacao.aprovado = true;
+      await updateSolicitation(updateSolicitacao._id, updateSolicitacao);
+      const newListSolicitation = await getAllSolicitation();
+
+      setSolicitacaoData(newListSolicitation);
+    }
+    setSelectGuia('');
+  }
+  console.log(selectGuia)
 
   function createData(
     status?: string,
     name?: string,
     dateSolicitacao?: string,
     exame?: string,
-    guia?: number,
+    guia?: string | number,
     buttonAprovar?: string,
     iconEdit?: string,
     iconDelete?: string,
@@ -36,12 +71,37 @@ function TableMain() {
     return { status, name, dateSolicitacao, exame, guia, buttonAprovar, iconEdit, iconDelete };
   }
 
+  useEffect(() => {
+    if (solicitacaoData.length > 0) {
+      const newRows = solicitacaoData.map((item: ICadastroSolicitacao) => {
+        return createData(
+          item.aprovado ? 'Aprovado' : 'Pendente',
+          item.nome ? item.nome : '---',
+          item.dataSolicitacao ? item.dataSolicitacao : '---',
+          item.exame ? item.exame : '---',
+          item.guia ? item.guia : '---',
+          'Aprovar',
+          'Editar',
+          'Excluir',
+        )
+      })
+      setRows(newRows)
+    }
+  }, [solicitacaoData])
+
   return (
     <Box
       sx={{
         width: '98%',
       }}
     >
+      {selectGuia && <ModalConfirmApprove
+        open={openModalApprove}
+        guia={selectGuia}
+        setSelectGuia={setSelectGuia}
+        setClose={setOpenModalApprove}
+        handleApprove={handleApprove}
+      />}
       <Box
         sx={{
           width: '100%',
@@ -65,18 +125,16 @@ function TableMain() {
                 width: '100%',
               }}
             >
-              <TableCell>Status</TableCell>
+              <TableCell sx={{ textAlign:'center' }}>Status</TableCell>
               <TableCell align="right">Nome</TableCell>
               <TableCell align="right">Data Solicitação</TableCell>
               <TableCell align="right">Exame</TableCell>
               <TableCell align="right">Guia</TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right">Ação</TableCell>
-              <TableCell align="right"></TableCell>
+              <TableCell sx={{ textAlign: 'center' }} align="right">Ação</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => {
+            {rows.length > 0 && rows.map((row: IRowTable) => {
               return (
                 <TableRow
                   key={uuidv4()}
@@ -89,9 +147,40 @@ function TableMain() {
                   <TableCell align="right">{row.dateSolicitacao}</TableCell>
                   <TableCell align="right">{row.exame}</TableCell>
                   <TableCell align="right">{row.guia}</TableCell>
-                  <TableCell align="right">{row.buttonAprovar}</TableCell>
+                  <TableCell align="right">
+                    <Box>
+                      <Button onClick={() => {
+                        setOpenModalApprove(true);
+                        setSelectGuia(row.guia || '')
+                      }}>
+                        <Image
+                          src={IconAprovar}
+                          alt="aprovar"
+                          width={24}
+                          height={24}
+                        />
+                      </Button>
+                      <Button>
+                        <Image
+                          src={IconEdit}
+                          alt="edit"
+                          width={24}
+                          height={24}
+                        />
+                      </Button>
+                      <Button>
+                        <Image
+                          src={IconDelete}
+                          alt="delete"
+                          width={24}
+                          height={24}
+                        />
+                      </Button>
+                    </Box>
+                  </TableCell>
+                  {/* <TableCell align="right">{row.buttonAprovar}</TableCell>
                   <TableCell align="right">{row.iconEdit}</TableCell>
-                  <TableCell align="right">{row.iconDelete}</TableCell>
+                  <TableCell align="right">{row.iconDelete}</TableCell> */}
                 </TableRow>
               )
             } )}

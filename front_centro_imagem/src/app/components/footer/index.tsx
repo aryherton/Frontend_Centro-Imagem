@@ -16,7 +16,7 @@ function Footer() {
       }}
       component="footer"
     >
-      <p>Footer</p>
+      <p>Teresina/PI</p>
     </Box>
   );
 }
