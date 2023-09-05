@@ -18,6 +18,7 @@ import IconAprovar from '../../../../../public/aprovado.png';
 import IconDelete from '../../../../../public/icons8-delete-48.png';
 import ModalConfirmApprove from '../../modal/confirmApprove';
 import { getAllSolicitation, updateSolicitation } from '@/services/fetch/apiSolicitation';
+import dayjs from 'dayjs';
 
 interface IRowTable {
   status?: string;
@@ -144,7 +145,7 @@ function TableMain() {
                     {row.status}
                   </TableCell>
                   <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.dateSolicitacao}</TableCell>
+                  <TableCell align="right">{dayjs(row.dateSolicitacao).format('DD/MM/YYYY')}</TableCell>
                   <TableCell align="right">{row.exame}</TableCell>
                   <TableCell align="right">{row.guia}</TableCell>
                   <TableCell align="right">
