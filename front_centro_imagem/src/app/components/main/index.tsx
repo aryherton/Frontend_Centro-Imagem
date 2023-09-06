@@ -9,7 +9,6 @@ import { SolicitacaoContext } from '../../../context'
 
 function Main() {
   const { openModalSolicitacao, handleOpen, handleClose } = useContext(SolicitacaoContext);
-  console.log(openModalSolicitacao)
 
   return (
     <Box

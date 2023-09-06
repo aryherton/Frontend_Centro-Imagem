@@ -1,6 +1,5 @@
 import { setupAPI } from './api';
 import { ICadastroSolicitacao } from '../../context/index';
-import axios, { AxiosError } from 'axios';
 
 export const api = setupAPI();
 

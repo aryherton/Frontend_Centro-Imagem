@@ -1,16 +1,19 @@
 import axios, { AxiosError } from 'axios';
-import { parseCookies } from 'nookies';
+// import { parseCookies } from 'nookies';
 import { AuthTokenError } from '../errors/AuthTokenError';
 import { signOut } from '@/context/AuthContext';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export function setupAPI(context = undefined) {
-  let cookies = parseCookies(context);
+  // let cookies = parseCookies(context);
 
   const api = axios.create({
-    baseURL: 'http://localhost:3003',
-    headers: {
-      Authorization: `Bearer ${cookies['@sgar.token']}`,
-    },
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    // headers: {
+    //   Authorization: `Bearer ${cookies['@sgar.token']}`,
+    // },
   });
 
   api.interceptors.response.use(

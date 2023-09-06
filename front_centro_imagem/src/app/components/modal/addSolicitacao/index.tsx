@@ -91,7 +91,7 @@ export default function ModalSolicitacao({ open, setClose }: ISpringModalProps) 
       observacao,
       logInterno: '',
     });
-    console.log(data);
+    setClose(false);
   };
 
   return (
