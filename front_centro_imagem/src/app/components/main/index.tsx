@@ -1,5 +1,5 @@
 'use client'
-import React, { use, useContext } from 'react'
+import React, { useContext } from 'react'
 
 import { Box } from '@mui/material'
 import TableMain from './table'
@@ -8,7 +8,7 @@ import ModalSolicitacao from '../modal/addSolicitacao'
 import { SolicitacaoContext } from '../../../context'
 
 function Main() {
-  const { openModalSolicitacao, handleOpen, handleClose } = useContext(SolicitacaoContext);
+  const { openModalSolicitacao, handleClose } = useContext(SolicitacaoContext);
 
   return (
     <Box
