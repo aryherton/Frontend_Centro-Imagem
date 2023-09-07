@@ -2,6 +2,7 @@
 import React, { useContext, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import Image from 'next/image';
+import dayjs from 'dayjs';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import ButtonAdd from '../fragment/buttonAdd';
 import { ICadastroSolicitacao, SolicitacaoContext } from '../../../../context';
 import IconEdit from '../../../../../public/edit24.png';
@@ -18,7 +19,7 @@ import IconAprovar from '../../../../../public/aprovado.png';
 import IconDelete from '../../../../../public/icons8-delete-48.png';
 import ModalConfirm from '../../modal/confirmApprove';
 import { deleteSolicitation, getAllSolicitation, updateSolicitation } from '@/services/fetch/apiSolicitation';
-import dayjs from 'dayjs';
+import { exportToPDF } from '@/services/utils/exportFile';
 
 interface IRowTable {
   status?: string;
@@ -32,18 +33,26 @@ interface IRowTable {
 }
 
 function TableMain() {
+  const [formatFile, setFormatFile] = React.useState('');
   const [rows, setRows] = React.useState<IRowTable[]>([]);
   const [openModalApprove, setOpenModalApprove] = React.useState(false);
   const [openModalDelete, setOpenModalDelete] = React.useState(false);
-  const [selectGuia, setSelectGuia] = React.useState<string | number | null >(null);
+  const [selectGuia, setSelectGuia] = React.useState<string | number | null>(null);
   const { handleOpen, solicitacaoData, setSolicitacaoData, filtroSolicitacaoData } = useContext(SolicitacaoContext);
-  // const rows = [
-  //   createData('Aprovado', 'João', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
-  //   createData('Pendente', 'Maria', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
-  //   createData('Aprovado', 'José', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
-  //   createData('Aprovado', 'Lucas', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
-  //   createData('Pendente', 'Ana', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
-  // ]
+
+  const handleExportFile = () => {
+    const data = {
+      head: [['Status', 'Nome', 'Data Solicitação', 'Exame', 'Guia']],
+      body: rows.map((item: IRowTable) => {
+        return [item.status, item.name, item.dateSolicitacao, item.exame, item.guia];
+      })
+    }
+    if (formatFile === 'xls') {
+      return;
+    } else {
+      exportToPDF(data, 'SolicitaçõesExamesUNIMED');
+    }
+  }
 
   const handleApprove = async () => {
     const updateSolicitacao = solicitacaoData
@@ -58,7 +67,7 @@ function TableMain() {
     }
     setSelectGuia('');
   }
-  
+
   const handleDelete = async () => {
     const updateSolicitacao = solicitacaoData
       .find((item: ICadastroSolicitacao) => item.guia === selectGuia);
@@ -134,12 +143,41 @@ function TableMain() {
           padding: '10px',
         }}
       >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 160 }}>
+            <InputLabel id="select-format-file-export">Formato do arquivo</InputLabel>
+            <Select
+              labelId="select-format-file-export"
+              id="select-format-file-export"
+              value={formatFile}
+              onChange={({ target: { value } }) => {
+                console.log(value);
+                setFormatFile(value)
+              }}
+              label="Selecione formato"
+            >
+              <MenuItem value="xls">XLS</MenuItem>
+              <MenuItem value="pdf">PDF</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            onClick={handleExportFile}
+          >
+            Exporta
+          </Button>
+        </Box>
         <ButtonAdd
           setOpen={handleOpen}
         />
       </Box>
       <TableContainer sx={{ borderRadius: '1%' }} component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table id="tabela-de-dados" sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow
               sx={{
@@ -149,7 +187,7 @@ function TableMain() {
                 width: '100%',
               }}
             >
-              <TableCell sx={{ textAlign:'center' }}>Status</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>Status</TableCell>
               <TableCell align="right">Nome</TableCell>
               <TableCell align="right">Data Solicitação</TableCell>
               <TableCell align="right">Exame</TableCell>
@@ -179,7 +217,7 @@ function TableMain() {
                           setOpenModalApprove(true);
                           setSelectGuia(row.guia || '')
                         }
-                      }>
+                        }>
                         <Image
                           src={IconAprovar}
                           alt="aprovar"
@@ -215,7 +253,7 @@ function TableMain() {
                   </TableCell>
                 </TableRow>
               )
-            } )}
+            })}
           </TableBody>
         </Table>
       </TableContainer>
