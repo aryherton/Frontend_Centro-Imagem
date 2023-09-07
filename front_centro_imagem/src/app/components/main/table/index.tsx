@@ -179,9 +179,6 @@ function TableMain() {
                       </Button>
                     </Box>
                   </TableCell>
-                  {/* <TableCell align="right">{row.buttonAprovar}</TableCell>
-                  <TableCell align="right">{row.iconEdit}</TableCell>
-                  <TableCell align="right">{row.iconDelete}</TableCell> */}
                 </TableRow>
               )
             } )}

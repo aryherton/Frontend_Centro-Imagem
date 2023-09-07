@@ -1,7 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import DateRangePicker, { DateRange } from '@mui/lab/DateRangePicker';
 
 export default function CustomDateRangeInputs() {

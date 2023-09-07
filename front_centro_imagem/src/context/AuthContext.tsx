@@ -1,6 +1,6 @@
 'use client';
 import { createContext, ReactNode, useState } from 'react';
-import { destroyCookie, setCookie, parseCookies } from 'nookies';
+import { destroyCookie, setCookie } from 'nookies';
 import Router from 'next/router';
 import { api } from '@/services/fetch/apiUser';
 
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     password,
   }: SignUpProps) {
     try {
-      const response = await api.post('/user', {
+      await api.post('/user', {
         email,
         name,
         password,

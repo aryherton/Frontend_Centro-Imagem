@@ -2,8 +2,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Input, InputProps } from '@mui/base/Input';
 import { styled } from '@mui/system';
-import { SolicitacaoContext, ICadastroSolicitacao } from '@/context';
-import { ta } from 'date-fns/locale';
 
 const CustomInput = React.forwardRef(function CustomInput(
   props: InputProps,

@@ -2,10 +2,6 @@
 import { createContext, ReactNode, use, useCallback, useEffect, useState } from 'react';
 import { getAllSolicitation } from '@/services/fetch/apiSolicitation';
 
-type TravelProviderProps = {
-  children: ReactNode;
-};
-
 export interface ICadastroSolicitacao {
   _id?: string;
   nome: string;
