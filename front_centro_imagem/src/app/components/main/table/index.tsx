@@ -36,7 +36,7 @@ function TableMain() {
   const [openModalApprove, setOpenModalApprove] = React.useState(false);
   const [openModalDelete, setOpenModalDelete] = React.useState(false);
   const [selectGuia, setSelectGuia] = React.useState<string | number | null >(null);
-  const { handleOpen, solicitacaoData, setSolicitacaoData } = useContext(SolicitacaoContext);
+  const { handleOpen, solicitacaoData, setSolicitacaoData, filtroSolicitacaoData } = useContext(SolicitacaoContext);
   // const rows = [
   //   createData('Aprovado', 'João', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
   //   createData('Pendente', 'Maria', '01/01/2021', 'Tomografia', 123456, 'Aprovar', 'Editar', 'Excluir'),
@@ -87,7 +87,8 @@ function TableMain() {
 
   useEffect(() => {
     if (solicitacaoData.length > 0) {
-      const newRows = solicitacaoData.map((item: ICadastroSolicitacao) => {
+      const arrayData = filtroSolicitacaoData.length > 0 ? filtroSolicitacaoData : solicitacaoData;
+      const newRows = arrayData.map((item: ICadastroSolicitacao) => {
         return createData(
           item.aprovado ? 'Aprovado' : 'Pendente',
           item.nome ? item.nome : '---',
@@ -101,7 +102,7 @@ function TableMain() {
       })
       setRows(newRows)
     }
-  }, [solicitacaoData])
+  }, [solicitacaoData, filtroSolicitacaoData])
 
   return (
     <Box

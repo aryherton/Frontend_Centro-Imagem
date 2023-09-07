@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
@@ -6,7 +6,8 @@ import Modal from '@mui/material/Modal';
 import { useSpring, animated } from '@react-spring/web';
 import DatePickerValue from '../../main/fragment/inputDate';
 import { Button, Input, TextField } from '@mui/material';
-import { postCreateSolicitation } from '@/services/fetch/apiSolicitation';
+import { getAllSolicitation, postCreateSolicitation } from '@/services/fetch/apiSolicitation';
+import { SolicitacaoContext } from '@/context';
 
 interface FadeProps {
   children: React.ReactElement;
@@ -73,6 +74,7 @@ interface ISpringModalProps {
 }
 
 export default function ModalSolicitacao({ open, setClose }: ISpringModalProps) {
+  const { setSolicitacaoData } = useContext(SolicitacaoContext);
   const [inpuName, setInputName] = useState('');
   const [inputDate, setInputDate] = useState('');
   const [inputExame, setInputExame] = useState('');
@@ -91,6 +93,9 @@ export default function ModalSolicitacao({ open, setClose }: ISpringModalProps) 
       observacao,
       logInterno: '',
     });
+    const newListSolicitation = await getAllSolicitation();
+
+    setSolicitacaoData(newListSolicitation);
     setClose(false);
   };
 

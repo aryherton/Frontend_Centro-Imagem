@@ -14,9 +14,18 @@ export interface ICadastroSolicitacao {
   __v?: number;
 }
 
+export interface IFilterOptions {
+  nameInput: 'aprovado' | 'nome' | 'exame' | 'guia';
+  newValue: string | boolean;
+  valueBool?: boolean | null;
+}
+
 export const SolicitacaoContext = createContext({} as any);
 
 export function SolicitacaoProvider({ children }: any) {
+  const [filterOptions, setFilterOptions] = useState<IFilterOptions[] | []>([]);
+  const [solicitacaoData, setSolicitacaoData] = useState([]);
+  const [filtroSolicitacaoData, setFiltroSolicitacaoData] = useState<ICadastroSolicitacao[] | []>([]);
   const [openModalSolicitacao, setOpenModalSolicitacao] = useState(false);
   const [checkCadastroSolicitacao, setCheckCadastroSolicitacao] = useState(false);
   const [cadastroSolicitacao, setCadastroSolicitacao] = useState({
@@ -28,7 +37,6 @@ export function SolicitacaoProvider({ children }: any) {
     observacao: '',
     logInterno: '',
   });
-  const [solicitacaoData, setSolicitacaoData] = useState([]);
 
   const handleOpen = () => setOpenModalSolicitacao(true);
   const handleClose = () => setOpenModalSolicitacao(false);
@@ -37,6 +45,31 @@ export function SolicitacaoProvider({ children }: any) {
     const data = await getAllSolicitation();
     setSolicitacaoData(data);
   }, []);
+
+  const handleFilterSolicitation = (objFilter: IFilterOptions) => {
+    console.log(objFilter);
+    if (objFilter.nameInput === 'aprovado') {
+      const filterDataSolicitacao = solicitacaoData
+        .filter((item: ICadastroSolicitacao) => item[objFilter.nameInput] === objFilter.valueBool);
+
+      setFiltroSolicitacaoData(filterDataSolicitacao);
+    } else {
+      let filterOpt = [...filterOptions, objFilter];
+      if (objFilter.newValue === null) {
+        filterOpt = filterOptions.filter((item: IFilterOptions) => item.nameInput !== objFilter.nameInput);
+      }
+      const filterDataSolicitacao = filterOpt
+        .reduce((acc: ICadastroSolicitacao[] | [], currentValue: IFilterOptions) => {
+          const filterValue = solicitacaoData
+            .filter((item: ICadastroSolicitacao) => item[currentValue.nameInput] === currentValue.newValue && !acc.some((obj: ICadastroSolicitacao) => obj._id === item._id));
+
+          return [...acc, ...filterValue];
+        }, []);
+
+      setFilterOptions(filterOpt);
+      setFiltroSolicitacaoData(filterDataSolicitacao);
+    }
+  }
 
   useEffect(() => {
     getAllSolicitationData();
@@ -54,6 +87,10 @@ export function SolicitacaoProvider({ children }: any) {
         setCheckCadastroSolicitacao,
         solicitacaoData,
         setSolicitacaoData,
+        filtroSolicitacaoData,
+        handleFilterSolicitation,
+        filterOptions,
+        setFilterOptions,
       }}
     >
       {children}

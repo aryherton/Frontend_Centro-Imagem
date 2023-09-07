@@ -14,7 +14,6 @@ export async function postCreateSolicitation(data: ICadastroSolicitacao) {
 }
 
 export async function deleteSolicitation(id: string) {
-  console.log(id);
   const response = await api.delete(`/solicitacoes-exames/${id}`);
   return response.data;
 }
