@@ -11,7 +11,7 @@ export function setupAPI(context = undefined) {
   // let cookies = parseCookies(context);
 
   const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://backendcentroimagem.onrender.com/',
     // headers: {
     //   Authorization: `Bearer ${cookies['@sgar.token']}`,
     // },
