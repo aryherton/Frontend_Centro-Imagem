@@ -73,9 +73,10 @@ interface ISpringModalProps {
   setSelectGuia: Function;
   setClose: Function;
   handleApprove: Function;
+  msg: string;
 }
 
-export default function ModalConfirmApprove({ open, guia, setSelectGuia, setClose, handleApprove }: ISpringModalProps) {
+export default function ModalConfirm({ open, guia, setSelectGuia, setClose, handleApprove, msg }: ISpringModalProps) {
 
   return (
     <div>
@@ -108,7 +109,7 @@ export default function ModalConfirmApprove({ open, guia, setSelectGuia, setClos
                 marginBottom: '30px',
               }}
             >
-              Deseja realmente aprovar essa solicitação?
+              { msg }
             </Typography>
             <Box sx={{
               width: '100%',

@@ -16,8 +16,8 @@ import { ICadastroSolicitacao, SolicitacaoContext } from '../../../../context';
 import IconEdit from '../../../../../public/edit24.png';
 import IconAprovar from '../../../../../public/aprovado.png';
 import IconDelete from '../../../../../public/icons8-delete-48.png';
-import ModalConfirmApprove from '../../modal/confirmApprove';
-import { getAllSolicitation, updateSolicitation } from '@/services/fetch/apiSolicitation';
+import ModalConfirm from '../../modal/confirmApprove';
+import { deleteSolicitation, getAllSolicitation, updateSolicitation } from '@/services/fetch/apiSolicitation';
 import dayjs from 'dayjs';
 
 interface IRowTable {
@@ -34,7 +34,8 @@ interface IRowTable {
 function TableMain() {
   const [rows, setRows] = React.useState<IRowTable[]>([]);
   const [openModalApprove, setOpenModalApprove] = React.useState(false);
-  const [selectGuia, setSelectGuia] = React.useState<string | number>('');
+  const [openModalDelete, setOpenModalDelete] = React.useState(false);
+  const [selectGuia, setSelectGuia] = React.useState<string | number | null >(null);
   const { handleOpen, solicitacaoData, setSolicitacaoData } = useContext(SolicitacaoContext);
   // const rows = [
   //   createData('Aprovado', 'João', '01/01/2021', 'Ressonância', 123456, 'Aprovar', 'Editar', 'Excluir'),
@@ -57,7 +58,19 @@ function TableMain() {
     }
     setSelectGuia('');
   }
-  console.log(selectGuia)
+  
+  const handleDelete = async () => {
+    const updateSolicitacao = solicitacaoData
+      .find((item: ICadastroSolicitacao) => item.guia === selectGuia);
+
+    if (updateSolicitacao) {
+      await deleteSolicitation(updateSolicitacao._id);
+      const newListSolicitation = await getAllSolicitation();
+
+      setSolicitacaoData(newListSolicitation);
+    }
+    setSelectGuia('');
+  }
 
   function createData(
     status?: string,
@@ -96,12 +109,21 @@ function TableMain() {
         width: '98%',
       }}
     >
-      {selectGuia && <ModalConfirmApprove
+      {selectGuia && <ModalConfirm
         open={openModalApprove}
         guia={selectGuia}
         setSelectGuia={setSelectGuia}
         setClose={setOpenModalApprove}
         handleApprove={handleApprove}
+        msg="Deseja aprovar a solicitação?"
+      />}
+      {selectGuia && <ModalConfirm
+        open={openModalDelete}
+        guia={selectGuia}
+        setSelectGuia={setSelectGuia}
+        setClose={setOpenModalDelete}
+        handleApprove={handleDelete}
+        msg="Deseja excluir a solicitação?"
       />}
       <Box
         sx={{
@@ -150,15 +172,21 @@ function TableMain() {
                   <TableCell align="right">{row.guia}</TableCell>
                   <TableCell align="right">
                     <Box>
-                      <Button onClick={() => {
-                        setOpenModalApprove(true);
-                        setSelectGuia(row.guia || '')
-                      }}>
+                      <Button
+                        disabled={row.status === 'Aprovado'}
+                        onClick={() => {
+                          setOpenModalApprove(true);
+                          setSelectGuia(row.guia || '')
+                        }
+                      }>
                         <Image
                           src={IconAprovar}
                           alt="aprovar"
                           width={24}
                           height={24}
+                          style={{
+                            opacity: row.status === 'Aprovado' ? 0.5 : 1,
+                          }}
                         />
                       </Button>
                       <Button>
@@ -169,7 +197,12 @@ function TableMain() {
                           height={24}
                         />
                       </Button>
-                      <Button>
+                      <Button
+                        onClick={() => {
+                          setSelectGuia(row.guia || '')
+                          setOpenModalDelete(true);
+                        }}
+                      >
                         <Image
                           src={IconDelete}
                           alt="delete"
