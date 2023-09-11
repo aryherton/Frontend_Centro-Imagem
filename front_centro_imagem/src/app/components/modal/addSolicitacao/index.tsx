@@ -96,6 +96,11 @@ export default function ModalSolicitacao({ open, setClose }: ISpringModalProps) 
     const newListSolicitation = await getAllSolicitation();
 
     setSolicitacaoData(newListSolicitation);
+    setInputName('');
+    setInputDate('');
+    setInputExame('');
+    setInputGuia('');
+    setObservacao('');
     setClose(false);
   };
 
