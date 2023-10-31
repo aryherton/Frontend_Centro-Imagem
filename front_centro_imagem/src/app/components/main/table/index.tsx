@@ -19,7 +19,7 @@ import IconAprovar from '../../../../../public/aprovado.png';
 import IconDelete from '../../../../../public/icons8-delete-48.png';
 import ModalConfirm from '../../modal/confirmApprove';
 import { deleteSolicitation, getAllSolicitation, updateSolicitation } from '@/services/fetch/apiSolicitation';
-import { exportToPDF } from '@/services/utils/exportFile';
+import { exportToPDF, exportToXLS } from '@/services/utils/exportFile';
 
 interface IRowTable {
   status?: string;
@@ -42,13 +42,20 @@ function TableMain() {
 
   const handleExportFile = () => {
     const data = {
-      head: [['Status', 'Nome', 'Data Solicitação', 'Exame', 'Guia']],
+      head: ['Status', 'Nome', 'Data Solicitação', 'Exame', 'Guia'],
       body: rows.map((item: IRowTable) => {
-        return [item.status, item.name, item.dateSolicitacao, item.exame, item.guia];
+        return {
+          Status: item.status,
+          Nome: item.name,
+          'Data Solicitação': item.dateSolicitacao,
+          Exame: item.exame,
+          Guia: item.guia
+        };
       })
-    }
+    };
+
     if (formatFile === 'xls') {
-      return;
+      exportToXLS(data, 'SolicitaçõesExamesUNIMED');
     } else {
       exportToPDF(data, 'SolicitaçõesExamesUNIMED');
     }

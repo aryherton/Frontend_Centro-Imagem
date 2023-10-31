@@ -3,9 +3,14 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 const exportToXLS = (data: any, filename: string) => {
-  const ws = utils.json_to_sheet(data);
+  console.log('Estrutura de dados recebida >>>', data);
+  const ws = utils.json_to_sheet(data.body, {
+    header: data.head,
+  });
   const wb = utils.book_new();
+
   utils.book_append_sheet(wb, ws, 'Sheet1');
+
   writeFile(wb, `${filename}.xlsx`);
 };
 
